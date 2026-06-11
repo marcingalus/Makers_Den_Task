@@ -55,6 +55,7 @@ struct AutocompleteView<Provider: SearchProviding, Row: View>: View {
                 row(item)
             }
             .listStyle(.plain)
+            .scrollDismissesKeyboard(.interactively)
 
         case .empty:
             ContentUnavailableView.search

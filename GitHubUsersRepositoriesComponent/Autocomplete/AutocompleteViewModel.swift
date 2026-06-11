@@ -23,7 +23,12 @@ final class AutocompleteViewModel<Provider: SearchProviding> {
 
     /// The text the user is searching for; changing it triggers a search
     var query: String = "" {
-        didSet { search(for: query) }
+        didSet {
+            // Ignore no-op assignments (e.g. `.searchable` re-setting the
+            // same text when editing ends) so we don't re-run the search
+            guard query != oldValue else { return }
+            search(for: query)
+        }
     }
 
     /// What the view should currently render
