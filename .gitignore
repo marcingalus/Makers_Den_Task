@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode
+## User settings
+xcuserdata/
+*.xcuserstate
+
+## Build generated
+build/
+DerivedData/
+
+## Various Xcode artifacts
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+.build/
+.swiftpm/
+
+## Secrets — never commit a real token
+Secrets.xcconfig
+*.token
