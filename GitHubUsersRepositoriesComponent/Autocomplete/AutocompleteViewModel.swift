@@ -18,6 +18,9 @@ final class AutocompleteViewModel<Provider: SearchProviding> {
     /// Minimum characters required before a search runs
     let minimumQueryLength: Int
 
+    /// How long to wait after the last keystroke before searching
+    let debounceInterval: Duration
+
     /// The text the user is searching for; changing it triggers a search
     var query: String = "" {
         didSet { search(for: query) }
@@ -29,9 +32,14 @@ final class AutocompleteViewModel<Provider: SearchProviding> {
     private let provider: Provider
     private var searchTask: Task<Void, Never>?
 
-    init(provider: Provider, minimumQueryLength: Int = 3) {
+    init(
+        provider: Provider,
+        minimumQueryLength: Int = 3,
+        debounceInterval: Duration = .milliseconds(300)
+    ) {
         self.provider = provider
         self.minimumQueryLength = minimumQueryLength
+        self.debounceInterval = debounceInterval
     }
 
     isolated deinit {
@@ -56,6 +64,9 @@ final class AutocompleteViewModel<Provider: SearchProviding> {
 
     private func runSearch(_ text: String) async {
         do {
+            // Wait out the debounce window; a newer keystroke cancels us
+            // here, before we ever touch the provider
+            try await Task.sleep(for: debounceInterval)
             let items = try await provider.search(text)
             guard !Task.isCancelled else { return }
             state = items.isEmpty ? .empty : .results(items)
